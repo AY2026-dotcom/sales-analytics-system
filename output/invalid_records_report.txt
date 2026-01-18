@@ -1,0 +1,47 @@
+===========================================================================
+INVALID RECORDS REPORT
+===========================================================================
+Total Invalid Records: 7
+
+Invalid Record #1
+Transaction ID: T075
+Rejection Reason: 
+Product: Headphones
+Customer: C001
+---------------------------------------------------------------------------
+Invalid Record #2
+Transaction ID: T076
+Rejection Reason: 
+Product: USB Cable
+Customer: C025
+---------------------------------------------------------------------------
+Invalid Record #3
+Transaction ID: T077
+Rejection Reason: 
+Product: Wireless Mouse
+Customer: C001
+---------------------------------------------------------------------------
+Invalid Record #4
+Transaction ID: X2
+Rejection Reason: Invalid TransactionID format
+Product: Laptop Charger
+Customer: C023
+---------------------------------------------------------------------------
+Invalid Record #5
+Transaction ID: X611
+Rejection Reason: Invalid TransactionID format
+Product: Webcam
+Customer: C002
+---------------------------------------------------------------------------
+Invalid Record #6
+Transaction ID: X395
+Rejection Reason: Invalid TransactionID format
+Product: USB Cable
+Customer: C020
+---------------------------------------------------------------------------
+Invalid Record #7
+Transaction ID: T074
+Rejection Reason: 
+Product: Laptop
+Customer: C007
+---------------------------------------------------------------------------

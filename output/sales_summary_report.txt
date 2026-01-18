@@ -1,0 +1,68 @@
+===========================================================================
+SALES DATA ANALYTICS REPORT
+===========================================================================
+Report Generated: 2026-01-18 18:08:47
+
+DATA QUALITY SUMMARY
+---------------------------------------------------------------------------
+Valid Transactions Processed: 73
+Invalid Records Rejected: 7
+
+REVENUE ANALYSIS
+---------------------------------------------------------------------------
+Total Revenue: $3,548,613.00
+Average Transaction: $48,611.14
+Median Transaction: $10,152.00
+Standard Deviation: $135,254.19
+Minimum Transaction: $257.00
+Maximum Transaction: $818,960.00
+Total Units Sold: 401
+
+REVENUE IN MULTIPLE CURRENCIES
+---------------------------------------------------------------------------
+USD: $3,548,613.00
+EUR: €3,058,904.41
+GBP: £2,650,813.91
+INR: ₹322,107,602.01
+Exchange rates as of: 2026-01-18
+
+REGIONAL SALES PERFORMANCE
+---------------------------------------------------------------------------
+North           $   1,322,549.00  ( 37.3%)
+South           $     896,796.00  ( 25.3%)
+West            $     848,902.00  ( 23.9%)
+East            $     467,969.00  ( 13.2%)
+
+TOP 5 PRODUCTS BY REVENUE
+---------------------------------------------------------------------------
+1. Laptop,Premium
+   Revenue: $2,069,871.00
+   Units Sold: 27
+
+2. Monitor
+   Revenue: $493,759.00
+   Units Sold: 30
+
+3. Laptop
+   Revenue: $184,329.00
+   Units Sold: 3
+
+4. Monitor,LED
+   Revenue: $132,104.00
+   Units Sold: 12
+
+5. Webcam
+   Revenue: $128,187.00
+   Units Sold: 35
+
+TOP 5 CUSTOMERS BY SPENDING
+---------------------------------------------------------------------------
+1. Customer C004: $857,124.00
+2. Customer C017: $762,460.00
+3. Customer C010: $457,186.00
+4. Customer C024: $261,848.00
+5. Customer C008: $216,176.00
+
+===========================================================================
+Analysis powered by Pandas and NumPy
+===========================================================================
