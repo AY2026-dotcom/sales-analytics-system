@@ -5,7 +5,7 @@ Module 3: Python Programming Assignment
 A comprehensive Python-based sales analytics system leveraging **Pandas** and **NumPy** for efficient data processing, validation, and statistical analysis.
 
 ## Author
-[Your Name]  
+Akanksha Yadav  
 Python Data Analytics Assignment
 
 ## Overview
