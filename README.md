@@ -6,6 +6,7 @@ A comprehensive Python-based sales analytics system leveraging **Pandas** and **
 
 ## Author
 Akanksha Yadav  
+[Akanksha Yadav]  
 Python Data Analytics Assignment
 
 ## Overview
@@ -197,30 +198,6 @@ Raw Data (sales_data.txt)
 [Analysis] - Pandas groupby + NumPy stats
     ↓
 [Reporting] - Generate multiple output formats
-```
-
-## Why Pandas and NumPy?
-
-### Pandas Benefits
-- **Performance**: Vectorized operations are 10-100x faster than loops
-- **Simplicity**: Complex operations in single lines of code
-- **Flexibility**: Easy data manipulation and transformation
-- **Integration**: Works seamlessly with NumPy
-
-### NumPy Benefits
-- **Speed**: Optimized C libraries for numerical operations
-- **Memory Efficiency**: Array operations use less memory
-- **Mathematical Functions**: Extensive library of statistical functions
-- **Industry Standard**: Used in data science and machine learning
-
-### Code Comparison
-
-**Without Pandas/NumPy:**
-```python
-total = 0
-for transaction in transactions:
-    total += transaction['price'] * transaction['quantity']
-avg = total / len(transactions)
 ```
 
 **With Pandas:**
