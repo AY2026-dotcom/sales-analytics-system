@@ -1,3 +1,18 @@
+from utils.api_handler import (
+    fetch_all_products,
+    create_product_mapping,
+    enrich_sales_data
+)
+
+from utils.data_processor import (
+    calculate_total_revenue,
+    region_wise_sales,
+    top_selling_products,
+    customer_analysis,
+    daily_sales_trend,
+    find_peak_sales_day,
+    low_performing_products
+)
 import os
 import pandas as pd
 import numpy as np
@@ -147,7 +162,7 @@ def main():
     
     # Continue with existing pandas/numpy analysis...
     # (rest of your existing main.py code continues here)
-    
+
 def main():
     """
     Main function - orchestrates the entire analytics pipeline
@@ -234,4 +249,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main( )
