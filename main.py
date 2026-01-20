@@ -1,252 +1,150 @@
-from utils.api_handler import (
-    fetch_all_products,
-    create_product_mapping,
-    enrich_sales_data
-)
-
-from utils.data_processor import (
-    calculate_total_revenue,
-    region_wise_sales,
-    top_selling_products,
-    customer_analysis,
-    daily_sales_trend,
-    find_peak_sales_day,
-    low_performing_products
-)
+import sys
 import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from utils.file_handler import read_sales_data, write_report, save_cleaned_data
-from utils.data_processor import validate_and_clean, analyze_sales
-from utils.api_handler import enrich_with_categories, fetch_exchange_rates
+
+
+from utils.file_handler import (
+    read_sales_data,
+    write_report,
+    save_cleaned_data,
+    parse_transactions,
+    validate_and_filter
+)
+
+from utils.data_processor import (
+    validate_and_clean,
+    analyze_sales
+)
+
+from utils.api_handler import (
+    fetch_all_products,
+    create_product_mapping,
+    enrich_sales_data,
+    fetch_exchange_rates
+)
+
+from utils.report_generator import generate_sales_report
 
 
 def generate_summary_report(analysis, invalid_count, rates):
-    """
-    Generate comprehensive summary report
-    """
     report = []
     report.append("=" * 75)
     report.append("SALES DATA ANALYTICS REPORT")
     report.append("=" * 75)
     report.append(f"Report Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     report.append("")
-    
-    # Data Quality Section
-    report.append("DATA QUALITY SUMMARY")
-    report.append("-" * 75)
-    report.append(f"Valid Transactions Processed: {analysis['transaction_count']}")
-    report.append(f"Invalid Records Rejected: {invalid_count}")
-    report.append("")
-    
-    # Revenue Analysis
-    report.append("REVENUE ANALYSIS")
+
+    report.append("OVERALL SUMMARY")
     report.append("-" * 75)
     report.append(f"Total Revenue: ${analysis['total_revenue']:,.2f}")
-    report.append(f"Average Transaction: ${analysis['avg_transaction']:,.2f}")
-    report.append(f"Median Transaction: ${analysis['median_transaction']:,.2f}")
-    report.append(f"Standard Deviation: ${analysis['std_dev']:,.2f}")
-    report.append(f"Minimum Transaction: ${analysis['min_transaction']:,.2f}")
-    report.append(f"Maximum Transaction: ${analysis['max_transaction']:,.2f}")
-    report.append(f"Total Units Sold: {analysis['total_units']:,.0f}")
+    report.append(f"Total Transactions: {analysis['transaction_count']}")
+    report.append(f"Average Order Value: ${analysis['avg_transaction']:,.2f}")
     report.append("")
-    
-    # Currency Conversion
+
     if rates:
-        report.append("REVENUE IN MULTIPLE CURRENCIES")
+        report.append("REVENUE (MULTI-CURRENCY)")
         report.append("-" * 75)
         rev = analysis['total_revenue']
         report.append(f"USD: ${rev:,.2f}")
         report.append(f"EUR: €{rev * rates['EUR']:,.2f}")
         report.append(f"GBP: £{rev * rates['GBP']:,.2f}")
         report.append(f"INR: ₹{rev * rates['INR']:,.2f}")
-        report.append(f"Exchange rates as of: {rates['date']}")
         report.append("")
-    
-    # Regional Performance
-    report.append("REGIONAL SALES PERFORMANCE")
+
+    report.append("REGION-WISE PERFORMANCE")
     report.append("-" * 75)
-    total = analysis['total_revenue']
-    sorted_regions = sorted(analysis['region_sales'].items(), 
-                           key=lambda x: x[1], reverse=True)
-    
-    for region, revenue in sorted_regions:
-        percentage = (revenue / total) * 100
-        report.append(f"{region:15s} ${revenue:15,.2f}  ({percentage:5.1f}%)")
-    report.append("")
-    
-    # Top Products
-    report.append("TOP 5 PRODUCTS BY REVENUE")
-    report.append("-" * 75)
-    for rank, (product, data) in enumerate(analysis['top_products'], 1):
-        report.append(f"{rank}. {product}")
-        report.append(f"   Revenue: ${data['revenue']:,.2f}")
-        report.append(f"   Units Sold: {data['units']:,.0f}")
-        report.append("")
-    
-    # Top Customers
-    report.append("TOP 5 CUSTOMERS BY SPENDING")
-    report.append("-" * 75)
-    for rank, (customer, spending) in enumerate(analysis['top_customers'], 1):
-        report.append(f"{rank}. Customer {customer}: ${spending:,.2f}")
-    report.append("")
-    
+    for region, revenue in sorted(
+        analysis['region_sales'].items(),
+        key=lambda x: x[1],
+        reverse=True
+    ):
+        report.append(f"{region:15s} ${revenue:,.2f}")
+
     report.append("=" * 75)
-    report.append("Analysis powered by Pandas and NumPy")
-    report.append("=" * 75)
-    
-    return '\n'.join(report)
+    return "\n".join(report)
 
 
 def generate_invalid_report(invalid_df):
-    """
-    Generate report for invalid records
-    """
     report = []
     report.append("=" * 75)
     report.append("INVALID RECORDS REPORT")
     report.append("=" * 75)
     report.append(f"Total Invalid Records: {len(invalid_df)}")
-    report.append("")
-    
-    for idx, (_, record) in enumerate(invalid_df.iterrows(), 1):
-        report.append(f"Invalid Record #{idx}")
-        report.append(f"Transaction ID: {record.get('TransactionID', 'N/A')}")
-        report.append(f"Rejection Reason: {record.get('Reason', 'Unknown')}")
-        report.append(f"Product: {record.get('ProductName', 'N/A')}")
-        report.append(f"Customer: {record.get('CustomerID', 'N/A')}")
-        report.append("-" * 75)
-    
-    return '\n'.join(report)
+    return "\n".join(report)
+
+
+def main_task1_pipeline():
+    print("Running Task 1 pipeline (parsing & validation only)")
+
+    raw_lines = read_sales_data("data/sales_data.txt")
+    transactions = parse_transactions(raw_lines)
+    valid_txns, invalid_count, _ = validate_and_filter(transactions)
+
+    print(f"Valid: {len(valid_txns)}, Invalid: {invalid_count}")
+
 
 def main():
-    """
-    Main function using new Task functions
-    """
     print("\n" + "=" * 75)
     print("SALES DATA ANALYTICS SYSTEM")
-    print("Enhanced with Tasks 1.1, 1.2, and 1.3")
     print("=" * 75)
-    print()
-    
-    # Import the new functions
-    from utils.file_handler import read_sales_data as read_raw
-    from utils.file_handler import parse_transactions, validate_and_filter
-    
-    # Task 1.1: Read raw data
-    print("TASK 1.1: Reading raw sales data...")
-    raw_lines = read_raw('data/sales_data.txt')
-    
-    if not raw_lines:
-        print("ERROR: Could not read data file")
-        return
-    
-    # Task 1.2: Parse transactions
-    print("\nTASK 1.2: Parsing transactions...")
-    transactions_list = parse_transactions(raw_lines)
-    
-    if not transactions_list:
-        print("ERROR: No transactions parsed")
-        return
-    
-    # Task 1.3: Validate and filter
-    print("\nTASK 1.3: Validating and filtering...")
-    valid_transactions, invalid_count, filter_summary = validate_and_filter(
-        transactions_list
-    )
-    
-    # Convert list of dicts to DataFrame for further processing
-    import pandas as pd
-    df = pd.DataFrame(valid_transactions)
-    
-    # Continue with existing pandas/numpy analysis...
-    # (rest of your existing main.py code continues here)
 
-def main():
-    """
-    Main function - orchestrates the entire analytics pipeline
-    """
-    print("\n" + "=" * 75)
-    print("SALES DATA ANALYTICS SYSTEM")
-    print("Powered by Pandas and NumPy")
-    print("=" * 75)
-    print()
-    
-    # Step 1: Read data
-    print("STEP 1: Reading Sales Data")
-    print("-" * 75)
-    df = read_sales_data('data/sales_data.txt')
-    
+    # STEP 1: Read data
+    df = read_sales_data("data/sales_data.txt")
     if df.empty:
-        print("ERROR: No data to process. Exiting.")
+        print("No data found.")
         return
-    
-    # Step 2: Clean and validate
-    print("STEP 2: Data Cleaning and Validation")
-    print("-" * 75)
+
+    # STEP 2: Clean & validate
     valid_df, invalid_df = validate_and_clean(df)
-    
     if valid_df.empty:
-        print("ERROR: No valid transactions found. Exiting.")
+        print("No valid records.")
         return
-    
-    # Step 3: Enrich with categories
-    print("STEP 3: Data Enrichment")
-    print("-" * 75)
-    enriched_df = enrich_with_categories(valid_df)
-    
-    # Step 4: Fetch exchange rates
-    print("STEP 4: API Integration")
-    print("-" * 75)
+
+    # STEP 3: API – Fetch products
+    api_products = fetch_all_products()
+    product_mapping = create_product_mapping(api_products)
+
+    # STEP 4: API – Enrich sales data
+    enriched_transactions = enrich_sales_data(
+        valid_df.to_dict(orient="records"),
+        product_mapping
+    )
+    enriched_df = pd.DataFrame(enriched_transactions)
+
+    # STEP 5: API – Exchange rates
     rates = fetch_exchange_rates()
-    
-    # Step 5: Perform analysis
-    print("STEP 5: Data Analysis")
-    print("-" * 75)
+
+    # STEP 6: Analysis
     analysis = analyze_sales(enriched_df)
-    
-    # Step 6: Generate reports
-    print("STEP 6: Report Generation")
-    print("-" * 75)
-    
-    # Create output directory
-    os.makedirs('output', exist_ok=True)
-    
-    # Generate and save summary report
-    summary = generate_summary_report(analysis, len(invalid_df), rates)
-    write_report('output/sales_summary_report.txt', summary)
-    
-    # Generate and save invalid records report
-    if not invalid_df.empty:
-        invalid_report = generate_invalid_report(invalid_df)
-        write_report('output/invalid_records_report.txt', invalid_report)
-    
-    # Save cleaned data (pipe-delimited)
-    save_cleaned_data('output/cleaned_sales_data.txt', enriched_df)
-    
-    # Bonus: Save as CSV for easy viewing in Excel
-    enriched_df.to_csv('output/cleaned_sales_data.csv', index=False)
-    print("Saved: output/cleaned_sales_data.csv")
-    
-    # Final summary
-    print()
-    print("=" * 75)
-    print("PROCESSING COMPLETE!")
-    print("=" * 75)
-    print(f"Valid Transactions: {len(valid_df)}")
-    print(f"Invalid Records: {len(invalid_df)}")
-    print(f"Total Revenue: ${analysis['total_revenue']:,.2f}")
-    print(f"Average Transaction: ${analysis['avg_transaction']:,.2f}")
-    print()
-    print("Generated Reports:")
-    print("  • output/sales_summary_report.txt")
-    print("  • output/invalid_records_report.txt")
-    print("  • output/cleaned_sales_data.txt")
-    print("  • output/cleaned_sales_data.csv")
-    print("=" * 75)
-    print()
+
+    # STEP 7: Report generation
+    os.makedirs("output", exist_ok=True)
+
+    summary_report = generate_summary_report(
+        analysis,
+        len(invalid_df),
+        rates
+    )
+    write_report("output/sales_summary_report.txt", summary_report)
+
+    invalid_report = generate_invalid_report(invalid_df)
+    write_report("output/invalid_records_report.txt", invalid_report)
+
+    generate_sales_report(
+        valid_df.to_dict(orient="records"),
+        enriched_transactions
+    )
+
+    save_cleaned_data("output/cleaned_sales_data.txt", enriched_df)
+    enriched_df.to_csv("output/cleaned_sales_data.csv", index=False)
+
+    print("Processing complete!")
 
 
 if __name__ == "__main__":
-    main( )
+    main()
