@@ -105,7 +105,49 @@ def generate_invalid_report(invalid_df):
     
     return '\n'.join(report)
 
-
+def main():
+    """
+    Main function using new Task functions
+    """
+    print("\n" + "=" * 75)
+    print("SALES DATA ANALYTICS SYSTEM")
+    print("Enhanced with Tasks 1.1, 1.2, and 1.3")
+    print("=" * 75)
+    print()
+    
+    # Import the new functions
+    from utils.file_handler import read_sales_data as read_raw
+    from utils.file_handler import parse_transactions, validate_and_filter
+    
+    # Task 1.1: Read raw data
+    print("TASK 1.1: Reading raw sales data...")
+    raw_lines = read_raw('data/sales_data.txt')
+    
+    if not raw_lines:
+        print("ERROR: Could not read data file")
+        return
+    
+    # Task 1.2: Parse transactions
+    print("\nTASK 1.2: Parsing transactions...")
+    transactions_list = parse_transactions(raw_lines)
+    
+    if not transactions_list:
+        print("ERROR: No transactions parsed")
+        return
+    
+    # Task 1.3: Validate and filter
+    print("\nTASK 1.3: Validating and filtering...")
+    valid_transactions, invalid_count, filter_summary = validate_and_filter(
+        transactions_list
+    )
+    
+    # Convert list of dicts to DataFrame for further processing
+    import pandas as pd
+    df = pd.DataFrame(valid_transactions)
+    
+    # Continue with existing pandas/numpy analysis...
+    # (rest of your existing main.py code continues here)
+    
 def main():
     """
     Main function - orchestrates the entire analytics pipeline
